@@ -182,7 +182,8 @@ void main() {
    initPointLight(lights[0], vec3(2.0, 0.0,  -2.0), vec4(1.0), 5.0);
    initPointLight(lights[1], vec3(-2.0, 0.0,  -2.0), vec4(1.0, 0.0, 0.0, 1.0), 5.0);
    initPointLight(lights[2], vec3(0.0, -2.0,  -2.0), vec4(0.5, 0.5, 1.0, 1.0), 5.0);
-   		
+   
+	//Color init   		
    //Diffuse Color
    //vec4 diffuseColor = vec4(aNormal * .5 + .5, 1.0); // Object_Space
    //vec4 diffuseColor = vec4(norm_camera * .5 + .5, 1.0); //View_Space
@@ -259,10 +260,10 @@ void main() {
 //PER_FRAGMENT, Object_SPACE 
    
    //Varyings
-   vNormal = vec4(aNormal, 0.0);
-   vPosition = aPosition;
-   vCameraPosition = camera_object;
-   vMat = modelMatInv;
+   //vNormal = vec4(aNormal, 0.0);
+   //vPosition = aPosition;
+   //vCameraPosition = camera_object;
+   //vMat = modelMatInv;
 
 //___________________________________
 //COMMON VARYINGS

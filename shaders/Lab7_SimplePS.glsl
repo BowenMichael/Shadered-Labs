@@ -123,7 +123,7 @@ void main() {
 	globalAmbientColor = texture(tex, vTexcoord.xy); //globalAmbientColor to a specific texture
 	
 	vec4 n = normalize(vNormal); //When vNormal is brought into pixel space the size is changed
-   	outColor = vColor; //Used for PER-VETEX 
+   	//outColor = vColor; //Used for PER-VETEX 
      		
    	//Lighting init
    	sLight lights[maxLights];
@@ -152,23 +152,9 @@ void main() {
 	}
 	phongColor += globalAmbientIntensity * globalAmbientColor;
 
-//____________________________________
-//PER_VERTEX, OBJECT_SPACE
-		
-   //_______________________________
-   //PHONG_REFLECTANCE
-   
-	//vec4 phongColorObjectSpace;
-	//Function
-	//for(i = 0; i < maxLights; i++){
-	//	phongColorObjectSpace += phongReflectance(lights[i], lights[i].center.xyz, 
-	//												vPosition.xyz, vNormal.xyz, vDiffuseColor, 
-	//												vSpecularColor);
-   //}
-   	//phongColorObjectSpace += globalAmbientIntensity * globalAmbientColor;
-   	
+
    //PER_FRAGMENT Render
-   //outColor = phongColor; 
+   outColor = phongColor; 
    
    	//Debugging
    	//Texcoord output
