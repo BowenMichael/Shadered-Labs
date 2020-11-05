@@ -168,7 +168,8 @@ void main() {
 						   0.0, 0.0, 1.0, 0.0,
 						   0.25, 0.25, 0.0, 1.0);
 	vec4 uv_atlas = atlasMat * aTexcoord;
-	vTexcoord = uv_atlas;
+	//vTexcoord = uv_atlas;
+	vTexcoord = aTexcoord;
 	
    //Camera Pipline
    mat4 modelMatInv = inverse(uModelMat);
@@ -190,6 +191,8 @@ void main() {
    
    //Specular Color
    vec4 specularColor = vec4(1.0);
+   
+   globalAmbientColor = texture(tex, aTexcoord.xy);
    
 
    

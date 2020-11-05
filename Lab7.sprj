@@ -47,9 +47,9 @@
 		<entry type="pinned" name="uProjectionMat" owner="Simple" />
 		<entry type="pinned" name="uViewProjMat" owner="Simple" />
 		<entry type="camera" fp="false">
-			<distance>5</distance>
-			<pitch>-17</pitch>
-			<yaw>36</yaw>
+			<distance>6</distance>
+			<pitch>8</pitch>
+			<yaw>22</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />

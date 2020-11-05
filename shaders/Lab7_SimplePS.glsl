@@ -120,6 +120,7 @@ vec4 phongReflectance(in sLight light, in vec4 surface, in vec4 surfaceNorm, in 
 
 
 void main() {
+	globalAmbientColor = texture(tex, vTexcoord.xy); //globalAmbientColor to a specific texture
 	
 	vec4 n = normalize(vNormal); //When vNormal is brought into pixel space the size is changed
    	outColor = vColor; //Used for PER-VETEX 
@@ -167,7 +168,7 @@ void main() {
    	//phongColorObjectSpace += globalAmbientIntensity * globalAmbientColor;
    	
    //PER_FRAGMENT Render
-   outColor = phongColor; 
+   //outColor = phongColor; 
    
    	//Debugging
    	//Texcoord output
