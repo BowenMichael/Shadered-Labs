@@ -30,7 +30,14 @@
 			<macros />
 		</pass>
 	</pipeline>
-	<objects />
+	<objects>
+		<object type="texture" path="World Texture.jpg" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat">
+			<bind slot="1" name="Simple" />
+		</object>
+		<object type="texture" path="..\Ice Texture.png" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat">
+			<bind slot="0" name="Simple" />
+		</object>
+	</objects>
 	<cameras />
 	<settings>
 		<entry type="property" name="Simple" item="pipe" />
@@ -40,9 +47,9 @@
 		<entry type="pinned" name="uProjectionMat" owner="Simple" />
 		<entry type="pinned" name="uViewProjMat" owner="Simple" />
 		<entry type="camera" fp="false">
-			<distance>8</distance>
-			<pitch>47</pitch>
-			<yaw>203</yaw>
+			<distance>5</distance>
+			<pitch>-17</pitch>
+			<yaw>36</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />

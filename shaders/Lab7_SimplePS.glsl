@@ -1,10 +1,26 @@
-#version 330
+#version 450 
 
 //Author: Michael Bowen
 
 #ifdef GL_ES
 precision highp float; // If GLSL ES is detected, add required precision setting.
 #endif // GL_ES
+
+//Uniforms
+uniform mat4 uViewMat;
+uniform mat4 uModelMat;
+uniform mat4 uProjectionMat;
+uniform mat4 uViewProjMat;
+uniform sampler2D tex;
+uniform float time;
+
+//Attributes
+//Object-Space
+layout (location = 0) in vec4 aPosition; //3d position in space
+layout (location = 1) in vec3 aNormal; //normal
+
+//Texture-Space
+//layout (location = 2) in vec4 aTexcoord; //2d uv
 
 //Global Variables
 float globalAmbientIntensity = .1;
@@ -17,6 +33,9 @@ in vec4 vNormal;
 in vec4 vPosition;
 in vec4 vDiffuseColor;
 in vec4 vSpecularColor;
+in vec4 vTexcoord;
+in vec4 vCameraPosition;
+in mat4 vMat;
 
 //Inputs
 
@@ -50,6 +69,11 @@ float lengthSq(vec3 x)
     return dot(x, x);
 }
 
+float lengthSq(vec4 x)
+{
+    return dot(x, x);
+}
+
 float powerOfTwo (in float base, in int power){
     for(int i = power - 1; i >= 0; --i){
     	base *= base;
@@ -57,9 +81,9 @@ float powerOfTwo (in float base, in int power){
 	return base;
 }
 
-float calcDiffuseI(in sLight light, in vec3 surface, in vec3 surfaceNorm, inout vec3 normLightVec)
+float calcDiffuseI(in sLight light, in vec4 surface, in vec4 surfaceNorm, inout vec4 normLightVec)
 {
-	vec3 lightVec = light.center.xyz - surface;
+	vec4 lightVec = light.center - surface;
    float sqLightVecLen = lengthSq(lightVec);
     normLightVec = lightVec * inversesqrt(sqLightVecLen);
    float diffuseCoefficent = max(0.0, (dot(surfaceNorm, normLightVec)));
@@ -68,68 +92,46 @@ float calcDiffuseI(in sLight light, in vec3 surface, in vec3 surfaceNorm, inout 
 
 }
 
-float calcSpecularI(in sLight light, in vec3 viewOrigin, in vec3 surface, in vec3 surfaceNorm, inout vec3 normLightVec ){
-	vec3 viewVec = viewOrigin - surface;
-   vec3 normViewVec = viewVec * inversesqrt(lengthSq(viewVec));
-   vec3 halfWayVec = normLightVec + normViewVec;
-   vec3 normHalfVec = halfWayVec * inversesqrt(lengthSq(halfWayVec));
+float calcSpecularI(in sLight light, in vec4 cameraPosition, in vec4 surface, in vec4 surfaceNorm, in vec4 normLightVec ){
+   vec4 viewVec = cameraPosition - surface;
+   vec4 normViewVec = viewVec * inversesqrt(lengthSq(viewVec));
+   vec4 halfWayVec = reflect(-normLightVec, surfaceNorm);//normLightVec + normViewVec; //NOT HALF WAY VECTOR ACTUALLY REFLECTION VECTOR
+   vec4 normHalfVec = halfWayVec * inversesqrt(lengthSq(halfWayVec));
    float specCoefficent = max(0.0, dot(surfaceNorm, normHalfVec));
    return powerOfTwo(specCoefficent, 6);
 }
 
-vec4 phongReflectance(in sLight light, in vec3 viewOrigin, in vec3 surface, in vec3 surfaceNorm, in vec4 diffuseColor, in vec4 specularColor){
+vec4 phongReflectance(in sLight light, in vec4 surface, in vec4 surfaceNorm, in vec4 diffuseColor, in vec4 specularColor, in vec4 camera){
 	//Diffuse Intensity
-   /*vec3 lightVec = lights[i].center.xyz - pos_camera.xyz;
-   float sqLightVecLen = lengthSq(lightVec);
-   vec3 normLightVec = lightVec * inversesqrt(sqLightVecLen);
-   float diffuseCoefficent = max(0.0, (dot(norm_camera, normLightVec)));
-   float attenuation = (1.0 - sqLightVecLen/squareValue(lights[i].intensity));
-   float diffuseIntensity = diffuseCoefficent * attenuation;*/
    //Function
-   vec3 normLightVec;
+   vec4 normLightVec;
    float diffuseIntensity = calcDiffuseI(light, surface, surfaceNorm, normLightVec);
    
-   
-   
    //Specular Intensity
-   /*vec3 viewVec = -pos_camera.xyz;
-   vec3 normViewVec = viewVec * inversesqrt(lengthSq(viewVec));
-   vec3 halfWayVec = normLightVec + normViewVec;
-   vec3 normHalfVec = halfWayVec * inversesqrt(lengthSq(halfWayVec));
-   float specCoefficent = max(0.0, dot(norm_camera, normHalfVec));
-   float specualarIntensity = powerOfTwo(specCoefficent, 5);*/
-   //float specualarIntensity = 0.0; //TO TEST DIFFUSE INTENSITY
    //Function
-   float specualarIntensity = calcSpecularI(light, viewOrigin, surface, surfaceNorm, normLightVec);
+   float specualarIntensity = calcSpecularI(light, camera, surface, surfaceNorm, normLightVec);
    
    //Final Color Calculation
-   return (diffuseIntensity * diffuseColor + specualarIntensity * specularColor) * light.color;  
-   		
-   	return specualarIntensity * specularColor;//Testing Specular Color
+   return ((diffuseIntensity * diffuseColor + specualarIntensity * specularColor)    * light.color);  
+   	
+   	//DEBUGGING
+   	//return specualarIntensity * specularColor;//Testing Specular Color
 }
 
 
 void main() {
 	
-	
-   	//outColor = vec4(vColor); //Used for PER-VETEX 
-
-
-   	   		
+	vec4 n = normalize(vNormal); //When vNormal is brought into pixel space the size is changed
+   	outColor = vColor; //Used for PER-VETEX 
+     		
    	//Lighting init
    	sLight lights[maxLights];
    	int i = 0;
    initPointLight(lights[0], vec3(2.0, 0.0,  -2.0), vec4(1.0), 5.0);
    initPointLight(lights[1], vec3(-2.0, 0.0,  -2.0), vec4(1.0, 0.0, 0.0, 1.0), 5.0);
    initPointLight(lights[2], vec3(0.0, -2.0,  -2.0), vec4(0.5, 0.5, 1.0, 1.0), 5.0);
-   
-   	//Diffuse Color
-   	//vec4 diffuseColor = vec4(vNormal.xyz * .5 + .5, 1.0);
-   	vec4 diffuseColor = vec4(0.5);
-   
-   	//Specular Color
-   	vec4 specularColor = vec4(1.0);
-   
+  
+      
 
 //____________________________________
 //PER_FRAGMENT
@@ -141,8 +143,11 @@ void main() {
 	vec4 phongColor;
 	for(i = 0; i < maxLights; i++)
 	{
-		phongColor += phongReflectance(lights[i], lights[i].center.xyz, vPosition.xyz,
-												 vNormal.xyz, vDiffuseColor, vSpecularColor);
+		//Creates a temporary sLight to give a point in the relevat space
+		sLight tmp;
+		vec4 light_space = vMat * lights[i].center; 
+		initPointLight(tmp, light_space.xyz, lights[i].color, lights[i].intensity);
+		phongColor += phongReflectance(tmp, vPosition, n, vDiffuseColor, vSpecularColor, vCameraPosition);
 	}
 	phongColor += globalAmbientIntensity * globalAmbientColor;
 
@@ -152,22 +157,22 @@ void main() {
    //_______________________________
    //PHONG_REFLECTANCE
    
-	vec4 phongColorObjectSpace;
+	//vec4 phongColorObjectSpace;
 	//Function
-	for(i = 0; i < maxLights; i++){
-		phongColorObjectSpace += phongReflectance(lights[i], lights[i].center.xyz, 
-													vPosition.xyz, vNormal.xyz, diffuseColor, 
-													specularColor);
-   }
-   	phongColorObjectSpace += globalAmbientIntensity * globalAmbientColor;
+	//for(i = 0; i < maxLights; i++){
+	//	phongColorObjectSpace += phongReflectance(lights[i], lights[i].center.xyz, 
+	//												vPosition.xyz, vNormal.xyz, vDiffuseColor, 
+	//												vSpecularColor);
+   //}
+   	//phongColorObjectSpace += globalAmbientIntensity * globalAmbientColor;
    	
-   //ViewSpace Render
+   //PER_FRAGMENT Render
    outColor = phongColor; 
    
-   //Object Space Render
-   //outColor = phongColorObjectSpace; 
-   
    	//Debugging
+   	//Texcoord output
+   	//outColor = texture(tex, vTexcoord.xy);
+   	
 	//PER-FRAGMENT Calculations 
 	//vec4 N = normalize(vNormal);
 	//outColor = vec4(N.xyz * 0.5 + 0.5, 1.0);   
