@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<project version="2">
+	<pipeline>
+		<pass name="pObjects" type="shader" active="true">
+			<shader type="vs" path="shaders\pObjectsVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\pObjectsPS.glsl" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="rtScene" />
+			<items>
+				<item name="gFloor" type="geometry">
+					<type>Plane</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<scaleX>10</scaleX>
+					<scaleY>10</scaleY>
+					<scaleZ>10</scaleZ>
+					<pitch>1.57079637</pitch>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gSphere" type="geometry">
+					<type>Sphere</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<z>0.563836098</z>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gCube" type="geometry">
+					<type>Cube</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<y>0.616073608</y>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uViewMat" system="View" />
+				<variable type="float4x4" name="uProjectionMat" system="Projection" />
+				<variable type="float4x4" name="uViewProjMat" system="ViewProjection" />
+				<variable type="float" name="time" system="Time" />
+			</variables>
+			<macros />
+		</pass>
+		<pass name="pDisplay" type="shader" active="true">
+			<shader type="vs" path="shaders\pDisplayVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\pDisplayPS.glsl" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture />
+			<items>
+				<item name="FSQ" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uViewMat" system="View" />
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uProjectionMat" system="Projection" />
+				<variable type="float4x4" name="uViewProjMat" system="ViewProjection" />
+				<variable type="float" name="time" system="Time" />
+				<variable type="float2" name="uResolution" system="ViewportSize" />
+				<variable type="int" name="uTex">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
+			</variables>
+			<macros />
+		</pass>
+	</pipeline>
+	<objects>
+		<object type="texture" path="..\Ice Texture.png" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat" />
+		<object type="rendertexture" name="Pass 1" fsize="671,871" clear="true" />
+		<object type="rendertexture" name="Scene Pass" fsize="671,871" clear="true" />
+		<object type="rendertexture" name="rtScene" fsize="672,953" clear="true">
+			<bind slot="0" name="pDisplay" />
+		</object>
+	</objects>
+	<cameras />
+	<settings>
+		<entry type="property" name="FSQ" item="pipe" />
+		<entry type="file" name="pDisplay" shader="vs" />
+		<entry type="file" name="pDisplay" shader="ps" />
+		<entry type="file" name="pObjects" shader="vs" />
+		<entry type="file" name="pObjects" shader="ps" />
+		<entry type="pinned" name="uViewMat" owner="pObjects" />
+		<entry type="pinned" name="uProjectionMat" owner="pObjects" />
+		<entry type="pinned" name="uViewProjMat" owner="pObjects" />
+		<entry type="camera" fp="false">
+			<distance>17</distance>
+			<pitch>19</pitch>
+			<yaw>353</yaw>
+			<roll>360</roll>
+		</entry>
+		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
+		<entry type="usealpha" val="false" />
+	</settings>
+	<plugindata />
+</project>
