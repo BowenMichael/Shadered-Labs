@@ -1,0 +1,75 @@
+#version 450
+
+//Uniforms
+uniform mat4 uViewMat;
+uniform mat4 uModelMat;
+uniform mat4 uProjectionMat;
+uniform mat4 uViewProjMat;
+uniform sampler2D tex;
+uniform float time;
+
+//Attributes
+layout (location = 0) in vec4 aPosition;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoord;
+
+
+//Varyings
+out vec4 vColor;
+out vec2 vTexCoord;
+out vec4 vNormal;
+out vec4 vPosition;
+out float vDepth;
+
+//Global Vars
+
+//Global Structures
+struct sLight
+{
+	vec4 center;
+    vec4 color;
+    float intensity;
+};
+
+void lightInit(out sLight light, in vec3 center, in vec3 color, in float intensity)
+{
+	light.center = vec4(center, 1.0);
+	light.color = vec4(color, 1.0);
+	light.intensity = intensity; 
+}
+
+void main()
+{
+//SetUp
+//________________________________________________________
+	//Position Pipeline
+	mat4 modelViewMat = uViewMat * uModelMat; //Model View Matrix
+    vec4 pos_world = uModelMat * aPosition; //World Space
+	vec4 pos_camera = modelViewMat * aPosition; //Position in camera Space
+	vec4 pos_clip = uProjectionMat * pos_camera; //Position in Clip Space
+	gl_Position = pos_clip;
+	
+	//Normal Pipeline
+	mat3 normalMat = transpose(inverse(mat3(modelViewMat)));
+	vec3 norm_camera = normalMat * aNormal;
+	//vec3 norm_camera = mat3(modelViewMat) * aNormal; //viewSpace Normal Blue Hue
+	vec3 norm_clip = mat3(uProjectionMat) * norm_camera;
+	
+	//Light Init
+	//sLight pointLight;
+	//lightInit(pointLight, vec3(0.0), vec3(1.0), 1.0);
+	
+//Shadow Pass
+//_____________________________________
+	
+	//vDepth = distance(pointLight.center.xyz,  pos_world.xyz)/ 10.0;
+	
+	
+//VS output
+//________________________________________________________
+	//vColor = vec4(vec3(distanceFromLight), 1.0);
+	
+	//Debug
+	gl_Position = aPosition;
+	vTexCoord = aPosition.xy *.5 + .5;
+}
