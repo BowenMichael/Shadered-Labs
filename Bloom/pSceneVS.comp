@@ -1,0 +1,22 @@
+#version 450
+
+//Uniforms
+uniform mat4 uModelMat;
+uniform mat4 uViewMat;
+uniform mat4 uProjMat;
+uniform mat4 uViewProjMat;
+
+//attributes
+layout (location = 0) in vec4 aPosition;
+
+//varyings
+out vec4 vColor;
+out vec4 vFragCoord;
+
+void main(){
+	mat4 ModelViewProjMat = uViewProjMat * uModelMat; 
+	vec4 pos_clip = ModelViewProjMat * aPosition;
+	gl_Position = pos_clip;
+	vColor = aPosition;
+	vFragCoord = aPosition * .5 + .5;
+}

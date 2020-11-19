@@ -1,0 +1,12 @@
+#version 450
+
+//attribute
+layout (location = 0) in vec4 aPosition;
+
+//Varying
+out vec2 vFragCoord;
+
+void main(){
+	gl_Position = aPosition;
+	vFragCoord = aPosition.xy * .5 + .5;
+}

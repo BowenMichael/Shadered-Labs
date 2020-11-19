@@ -1,0 +1,12 @@
+#version 450
+
+//attributes
+layout (location = 0) in vec4 aPosition;
+
+//varyings
+out vec4 vTexcoord;
+
+void main(){
+	gl_Position = aPosition;
+	vTexcoord = aPosition * .5 + .5;
+}

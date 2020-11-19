@@ -1,0 +1,28 @@
+#version 450
+
+//Uniforms
+uniform sampler2D uTex;
+uniform vec2 uViewPortSize;
+
+//Varyings
+in vec2 vFragCoord;
+
+//render Target
+out vec4 rtFragColor;
+
+//Functions
+float calcLuminance(in vec4 color){
+	return dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+}
+
+void main(){
+	 //vec2 uv = vFargCoord / uViewPortSize.xy;
+    vec4 tex = texture(uTex, vFragCoord.xy);
+    float brightness = calcLuminance(tex);
+    float fallOffBrightness = (brightness - .5)*.5;
+   // if(brightness > 1.0)
+    //    rtFragColor = vec4(vec3(brightness), 1.0);
+   // else
+   //     rtFragColor = vec4(0.0, 0.0, 0.0, 1.0);
+	rtFragColor = vec4(vec3(fallOffBrightness), 1.0);
+}

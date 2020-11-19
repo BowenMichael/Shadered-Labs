@@ -1,0 +1,39 @@
+#version 450
+
+//Uniforms
+uniform sampler2D uTex;
+uniform vec2 uViewPortSize;
+
+//Varyings
+in vec2 vFragCoord;
+
+//render Target
+out vec4 rtFragColor;
+
+//Global Variables
+float weight[3] = float[](0.375, 0.25, 0.625);
+void main(){
+
+	vec2 uv;
+	vec2 pixelSize = 1.0 / uViewPortSize;
+	int i;
+    vec4 textureColor = texture(uTex, vFragCoord.xy) * weight[0]; //runs outside the loop because the weight index at zero only runs once
+    for(i= weight.length() - 1; i > 0; --i){
+        
+        //All the pixel samples to the right
+        uv = (vec2(vFragCoord) + vec2(float(i), 0.0)) * pixelSize; //since pixel size is the measure of a single UV pixel can we get rid of the call to frag coord?
+        textureColor += texture(uTex, uv) * weight[i];
+        
+        //All the pixel samples to the left
+        uv = (vec2(vFragCoord) - vec2(float(i), 0.0) ) * pixelSize;
+        textureColor += texture(uTex, uv) * weight[i];
+        
+        //Convolution experimentation
+        //float weight = length(textureColor);
+        //weightSum += weight[i];
+    	//tex += weight * textureColor.rgb;
+    }
+
+    rtFragColor = textureColor;
+}
+

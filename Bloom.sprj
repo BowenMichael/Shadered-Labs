@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<project version="2">
+	<pipeline>
+		<pass name="pScene" type="shader" active="true">
+			<shader type="vs" path="Bloom\pSceneVS.comp" entry="main" />
+			<shader type="ps" path="Bloom\pScenePS.comp" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Scene Texture" />
+			<items>
+				<item name="gSphere" type="geometry">
+					<type>Sphere</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<x>-1.54552567</x>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gCube" type="geometry">
+					<type>Cube</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gGround" type="geometry">
+					<type>Plane</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<scaleX>10</scaleX>
+					<scaleY>10</scaleY>
+					<scaleZ>10</scaleZ>
+					<pitch>1.57079637</pitch>
+					<x>-0.433561325</x>
+					<y>-1.30712175</y>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gTriangle" type="geometry">
+					<type>Triangle</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<x>2.63948011</x>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uViewProjMat" system="ViewProjection" />
+				<variable type="float4x4" name="uViewMat" system="View" />
+				<variable type="float4x4" name="uProjMat" system="Projection" />
+			</variables>
+			<macros />
+		</pass>
+		<pass name="pBrightPass" type="shader" active="true">
+			<shader type="vs" path="Bloom\pBrightVS.comp" entry="main" />
+			<shader type="ps" path="Bloom\pBrightPS.comp" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Bright Pass Texture" />
+			<items>
+				<item name="bFSQ" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float2" name="uViewPortSize" system="ViewportSize" />
+			</variables>
+			<macros />
+		</pass>
+		<pass name="pBlur" type="shader" active="true">
+			<shader type="vs" path="Bloom\pBlurVS.comp" entry="main" />
+			<shader type="ps" path="Bloom\pBlurPS.comp" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Blur X Pass Texture" />
+			<items>
+				<item name="blurFSQ" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float2" name="uViewPortSize" system="ViewportSize" />
+			</variables>
+			<macros />
+		</pass>
+		<pass name="pBlurY" type="shader" active="true">
+			<shader type="vs" path="Bloom\pBlurYVS.comp" entry="main" />
+			<shader type="ps" path="Bloom\pBlurYPS.comp" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Blur Y Pass Texture" />
+			<items>
+				<item name="blurYFSQ" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float2" name="uViewPortSize" system="ViewportSize" />
+			</variables>
+			<macros />
+		</pass>
+		<pass name="pDisplayPass" type="shader" active="true">
+			<shader type="vs" path="Bloom\pDisplayPassVS.comp" entry="main" />
+			<shader type="ps" path="Bloom\pDisplayPassPS.comp" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture />
+			<items>
+				<item name="DisplayFSQ" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float2" name="uViewPort" system="ViewportSize" />
+				<variable type="int" name="uScene">
+					<row>
+						<value>1</value>
+					</row>
+				</variable>
+				<variable type="int" name="uBlur">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
+			</variables>
+			<macros />
+		</pass>
+	</pipeline>
+	<objects>
+		<object type="rendertexture" name="Scene Texture" fsize="462,806" clear="true">
+			<bind slot="0" name="pBrightPass" />
+			<bind slot="0" name="pDisplayPass" />
+		</object>
+		<object type="rendertexture" name="Bright Pass Texture" fsize="462,806" clear="true">
+			<bind slot="0" name="pBlur" />
+		</object>
+		<object type="rendertexture" name="Blur X Pass Texture" fsize="462,806" clear="true">
+			<bind slot="0" name="pBlurY" />
+		</object>
+		<object type="rendertexture" name="Blur Y Pass Texture" fsize="462,806" clear="true">
+			<bind slot="1" name="pDisplayPass" />
+		</object>
+		<object type="texture" path="" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat">
+			<bind slot="0" name="pScene" />
+		</object>
+	</objects>
+	<cameras />
+	<settings>
+		<entry type="property" name="C:\Users\micha\Pictures\TexturesCom_FaroerBayB_1K_hdri_sphere_tone.jpg" item="image3D" />
+		<entry type="file" name="pDisplayPass" shader="vs" />
+		<entry type="file" name="pDisplayPass" shader="ps" />
+		<entry type="file" name="pScene" shader="vs" />
+		<entry type="file" name="pScene" shader="ps" />
+		<entry type="file" name="pBrightPass" shader="vs" />
+		<entry type="file" name="pBrightPass" shader="ps" />
+		<entry type="file" name="pBlur" shader="vs" />
+		<entry type="file" name="pBlur" shader="ps" />
+		<entry type="file" name="pBlurY" shader="vs" />
+		<entry type="file" name="pBlurY" shader="ps" />
+		<entry type="pinned" name="uViewProjMat" owner="pScene" />
+		<entry type="pinned" name="uViewMat" owner="pScene" />
+		<entry type="pinned" name="uProjMat" owner="pScene" />
+		<entry type="camera" fp="false">
+			<distance>7</distance>
+			<pitch>19</pitch>
+			<yaw>171</yaw>
+			<roll>360</roll>
+		</entry>
+		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
+		<entry type="usealpha" val="false" />
+	</settings>
+	<plugindata />
+</project>
